@@ -8,9 +8,20 @@ spec:
     image: gcr.io/kaniko-project/executor:latest
       #    stdin: true
     args:
-    - "--dockerfile=Dockerfile"
-    - "--context=git://github.com/1eedaegon/kaniko-sample"
+    - "--dockerfile=git@github.com:1eedaegon/kaniko-sample/blob/main/Dockerfile"
+    - "--context=s3://sample2/kaniko-sample.tar.gz"
     - "--destination=https://index.docker.io/1eedaegon/kaniko-practice-sample:latest"
+    env:
+      - name: AWS_ACCESS_KEY_ID
+        value: [MINIO_KEY_ID]
+      - name: AWS_SECRET_ACCESS_KEY
+        value: [MINIO_KEY_PATH]
+      - name: AWS_REGION
+        value: us-east-1
+      - name: S3_ENDPOINT
+        value: http://my-minio-fs.default.svc.cluster.local:9000
+      - name: S3_FORCE_PATH_STYLE
+        value: "true"
     volumeMounts:
     - name: kaniko-secret
       mountPath: /kaniko/.docker
