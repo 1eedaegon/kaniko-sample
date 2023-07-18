@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kaniko-git
+spec:
+  template:
+    spec:
+      containers:
+      - name: kaniko-build
+        image: gcr.io/kaniko-project/executor:latest
+          #    stdin: true
+        args:
+        - "--dockerfile=Dockerfile"
+        - "--context=git://github.com/1eedaegon/kaniko-sample#refs/heads/main"
+        - "--destination=index.docker.io/1eedaegon/kaniko-practice-sample:latest"
+          #  env:
+          #    - name: AWS_ACCESS_KEY_ID
+          #      value: minio
+          #    - name: AWS_SECRET_ACCESS_KEY
+          #      value: minio123
+          #    - name: AWS_REGION
+          #      value: us-east-1
+          #    - name: S3_ENDPOINT
+          #      value: http://my-minio-fs.default.svc.cluster.local:9000
+          #    - name: S3_FORCE_PATH_STYLE
+          #      value: "true"
+        volumeMounts:
+        - name: kaniko-secret
+          mountPath: /kaniko/.docker
+      restartPolicy: Never
+      volumes:
+      - name: kaniko-secret
+        secret:
+          secretName: regcred
+          items:
+          - key: .dockerconfigjson
+            path: config.json
+

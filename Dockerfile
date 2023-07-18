@@ -1,2 +1,4 @@
-FROM alpine 
-RUN echo "created from standard input"
+FROM golang:1.21
+
+WORKDIR /go/src/app
+COPY
